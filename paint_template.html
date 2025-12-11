@@ -1,0 +1,138 @@
+<html>
+    <head>
+        <style>
+            .shape, .color {
+                height: 25px;
+                width: 25px;
+                margin: 3px;
+            }
+            .shape {
+                border: none;
+            }
+            .shape-picker, .color-picker {
+                margin: 20px;
+            }
+            svg, .tools {
+                display: inline-block;
+                vertical-align: top;
+                border: 1px solid black;
+            }
+            .selected {
+                outline: 2px solid red; 
+                outline-offset: 3px;;
+            }
+            #tool-line, #tool-circle, #tool-rectangle {
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center;
+            }
+            #tool-line {
+                background-image: url(Line.png);
+            }
+            #tool-circle {
+                background-image: url(Ellipse.png);
+            }
+            #tool-rectangle {
+                background-image: url(Rectangle.png);
+            }
+        </style>
+    </head>
+    <body>
+        <svg id="canvas" width="800" height="600" viewBox="0 0 800 600"></svg>
+        <div class="tools">
+            <div class="shape-picker">
+                <button class="shape selected" id="tool-line"></button>
+                <button class="shape" id="tool-circle"></button>
+                <button class="shape" id="tool-rectangle"></button>
+            </div>
+            <div class="color-picker" id="color-picker">
+                <button class="color selected"  data-color="#000000"></button>
+                <button class="color" data-color="#ff0000"></button>
+                <button class="color" data-color="#00ff00"></button>
+                <button class="color" data-color="#0000ff"></button>
+                <button class="color" data-color="#ff00ff"></button>
+                <button class="color" data-color="#ffff00"></button>
+                <button class="color" data-color="#00ffff"></button>
+
+            </div>
+        </div>
+        <script>
+
+            let pallete = document.getElementById("color-picker");
+            let color = "#000000";
+
+            for (let btn of pallete.getElementsByTagName("button")) {
+                btn.style.setProperty("background-color", btn.dataset.color)
+                // btn.addEventListener("click", function(event) {
+                //     color = btn.dataset.color
+                // })
+            }
+
+            pallete.addEventListener("click", function(event) {
+
+                let target = event.target;
+                let btn = target.closest("button");
+                if (btn.tagName == "BUTTON") {
+                    color = btn.dataset.color
+                }
+
+            })
+
+            let shapeType = "line";
+            let canvas = document.getElementById("canvas");
+            let startCoords = {};
+            let endCoords = {};
+
+            let currentShape;
+            canvas.addEventListener("mousedown", function(event) {
+                let xCoord = event.pageX;
+                let yCoord = event.pageY;
+                startCoords.x = xCoord;
+                startCoords.y = yCoord;
+
+            })
+
+
+
+            let drawLine = function(startCoordinates, endCoordinates) {
+                let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", startCoordinates.x);
+                line.setAttribute("y1", startCoordinates.y);
+                line.setAttribute("x2", endCoordinates.x);
+                line.setAttribute("y2", endCoordinates.y);
+                line.setAttribute("stroke", color);
+                canvas.appendChild(line);
+                return line
+            }
+
+            canvas.addEventListener("mouseup", function(event) {
+                let xCoord = event.pageX;
+                let yCoord = event.pageY;
+                endCoords.x = xCoord;
+                endCoords.y = yCoord;
+
+                drawLine(startCoords, endCoords)
+            })
+
+            canvas.addEventListener("mousemove", function(event) {
+                if (event.buttons == 0) {
+                    return;
+                }
+
+                let currenCoords = {
+                    x: event.pageX,
+                    y: event.pageY,
+                };
+
+                let xCoord = event.pageX;
+                let yCoord = event.pageY;
+
+                if ((currentShape !== null) && (currentShape !== undefined)) {
+                    canvas.removeChild(currentShape);
+                }
+                let line = drawLine(startCoords, currenCoords);
+                currentShape = line;
+            })
+        </script>
+    </body>
+</html>
