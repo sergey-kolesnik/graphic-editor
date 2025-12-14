@@ -18,7 +18,7 @@ svg, .tools {
     outline: 2px solid red; 
     outline-offset: 3px;;
             }
-#tool-line, #tool-circle, #tool-rectangle {
+#tool-line, #tool-circle, #tool-rectangle, #tool-pencil  {
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -33,3 +33,7 @@ svg, .tools {
 #tool-rectangle {
     background-image: url("../img/Rectangle.png");
             }
+
+#tool-pencil {
+    background-image: url("../img/pencil.jpg");
+}
