@@ -64,29 +64,30 @@
 
             for (let btn of palette.getElementsByTagName("button")) {
                 btn.style.setProperty("background-color", btn.dataset.color)
-                // btn.addEventListener("click", function(event) {
-                //     color = btn.dataset.color
-                // })
             }
 
             palette.addEventListener("click", function(event) {
-
                 let target = event.target;
-                let btn = target.closest("button");
-                if (btn.tagName == "BUTTON") {
-                    color = btn.dataset.color
+                let btn = target.closest("button.color");
+                if ((btn === undefined) || (btn === null) || (btn.tagName != "BUTTON") || (! palette.contains(btn))) {
+                    return
                 }
+                color = btn.dataset.color;
+                palette.querySelector("button.selected").classList.remove("selected");
+                btn.classList.add("selected");
 
             })
 
             shapePalette.addEventListener("click", function(event) {
 
                 let target = event.target;
-                let btn = target.closest("button");
-                if (btn.tagName == "BUTTON") {
-                    shapeType = btn.dataset.shape
-                    console.log(shapeType)
+                let btn = target.closest("button.shape");
+                if ((btn === undefined) || (btn === null) || (btn.tagName != "BUTTON") || (! shapePalette.contains(btn))) {
+                    return
                 }
+                shapeType = btn.dataset.shape;
+                shapePalette.querySelector("button.selected").classList.remove("selected");
+                btn.classList.add("selected");
 
             })
 
@@ -104,14 +105,11 @@
             })
 
             let drawLine = function(startCoordinates, endCoordinates) {
-                let line = document.createElementNS("http://www.w3.org/2000/svg&quot;, "line");
+                let line = document.createElementNS("http://www.w3.org/2000/svg&quot;", "line");
                 line.setAttribute("x1", startCoordinates.x);
                 line.setAttribute("y1", startCoordinates.y);
                 line.setAttribute("x2", endCoordinates.x);
-                line.setAttribute("y2",
-
-
-endCoordinates.y);
+                line.setAttribute("y2",endCoordinates.y);
                 line.setAttribute("stroke", color);
                 canvas.appendChild(line);
                 return line
@@ -143,7 +141,7 @@ endCoordinates.y);
                     y: event.pageY,
                 }
 
-                drawLine(startCoords, endCoords)
+                drawShape(startCoords, endCoords)
             })
 
             canvas.addEventListener("mousemove", function(event) {
