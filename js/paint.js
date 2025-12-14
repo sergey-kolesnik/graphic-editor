@@ -47,7 +47,7 @@ let calcRadius = function(startCoordinates, endCoordinates) {
     // return (dx ** 2 + dy ** 2) ** 0.5;
 };
 
-let drawLine = function(startCoordinates, endCoordinates) {
+let drawLine = function(event, startCoordinates, endCoordinates) {
     let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute('x1', startCoordinates.x);
     line.setAttribute('y1', startCoordinates.y);
@@ -58,7 +58,18 @@ let drawLine = function(startCoordinates, endCoordinates) {
     return line;
 };
 
-let drawCircle = function(startCoordinates, endCoordinates) {
+let drawPencil = function(event, coordinates) {
+    let pencil = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    pencil.setAttribute('cx', coordinates.x);
+    pencil.setAttribute('cy', coordinates.y);
+    pencil.setAttribute('r', 1);
+    pencil.setAttribute('stroke', color);
+    pencil.setAttribute('fill', color);
+    canvas.appendChild(pencil);
+    return pencil;
+};
+
+let drawCircle = function(event, startCoordinates, endCoordinates) {
     let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     circle.setAttribute('cx', startCoordinates.x);
     circle.setAttribute('cy', startCoordinates.y);
@@ -69,12 +80,25 @@ let drawCircle = function(startCoordinates, endCoordinates) {
     return circle;
 };
 
-let drawRectangle = function(startCoordinates, endCoordinates) {
+let drawRectangle = function(event, startCoordinates, endCoordinates) {
+    let shiftPressed = event.shiftKey;;
     let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.setAttribute('x', Math.min(startCoordinates.x, endCoordinates.x));
     rect.setAttribute('y', Math.min(startCoordinates.y, endCoordinates.y));
-    rect.setAttribute('width', Math.abs(endCoordinates.x - startCoordinates.x));
-    rect.setAttribute('height', Math.abs(endCoordinates.y - startCoordinates.y));
+
+    let width = Math.abs(endCoordinates.x - startCoordinates.x),
+        height = Math.abs(endCoordinates.y - startCoordinates.y);
+
+    if (shiftPressed) {
+        let edgeLength = Math.max(width, height);
+        rect.setAttribute('width', edgeLength);
+        rect.setAttribute('height', edgeLength);
+    } else {
+        rect.setAttribute('width', width);
+        rect.setAttribute('height', height);
+    }
+
+
     rect.setAttribute('stroke', color);
     rect.setAttribute('fill', 'none');
     canvas.appendChild(rect);
@@ -82,13 +106,15 @@ let drawRectangle = function(startCoordinates, endCoordinates) {
 };
 
 
-let drawShape = function(startCoordinates, endCoordinates) {
+let drawShape = function(event, startCoordinates, endCoordinates) {
     if (shapeType == 'line') {
-        return drawLine(startCoordinates, endCoordinates);
+        return drawLine(event, startCoordinates, endCoordinates);
     } else if (shapeType == 'circle') {
-        return drawCircle(startCoordinates, endCoordinates);
+        return drawCircle(event, startCoordinates, endCoordinates);
     } else if (shapeType == 'rectangle') {
-        return drawRectangle(startCoordinates, endCoordinates);
+        return drawRectangle(event, startCoordinates, endCoordinates);
+    } else if (shapeType == 'pencil') {
+        return drawPencil(event, endCoordinates); 
     } else {
         console.log(`Error: tool ${shapeType} not exists.`);
     }
@@ -99,7 +125,7 @@ canvas.addEventListener('mouseup', function(event) {
         x: event.pageX,
         y: event.pageY,
     };
-    drawShape(startCoords, endCoords);
+    drawShape(event, startCoords, endCoords);
 });
 
 canvas.addEventListener('mousemove', function(event) {
@@ -112,9 +138,9 @@ canvas.addEventListener('mousemove', function(event) {
         y: event.pageY,
     };
     
-    if ((currentShape !== null) && (currentShape !== undefined)) {
+    if ((currentShape !== null) && (currentShape !== undefined) && (shapeType !== "pencil")) {
         canvas.removeChild(currentShape);
     }
 
-    currentShape = drawShape(startCoords, endCoords);
+    currentShape = drawShape(event, startCoords, endCoords);
 });
