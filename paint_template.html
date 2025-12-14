@@ -9,7 +9,7 @@
             .shape {
                 border: none;
             }
-            .shape-picker, .color-picker {
+            #shape-picker, #color-picker {
                 margin: 20px;
             }
             svg, .tools {
@@ -40,12 +40,12 @@
     <body>
         <svg id="canvas" width="800" height="600" viewBox="0 0 800 600"></svg>
         <div class="tools">
-            <div class="shape-picker">
-                <button class="shape selected" id="tool-line"></button>
-                <button class="shape" id="tool-circle"></button>
-                <button class="shape" id="tool-rectangle"></button>
+            <div id="shape-picker">
+                <button class="shape selected" id="tool-line" data-shape="line"></button>
+                <button class="shape" id="tool-circle" data-shape="circle"></button>
+                <button class="shape" id="tool-rectangle" data-shape="rectangle"></button>
             </div>
-            <div class="color-picker" id="color-picker">
+            <div id="color-picker">
                 <button class="color selected"  data-color="#000000"></button>
                 <button class="color" data-color="#ff0000"></button>
                 <button class="color" data-color="#00ff00"></button>
@@ -58,17 +58,18 @@
         </div>
         <script>
 
-            let pallete = document.getElementById("color-picker");
+            let palette = document.getElementById("color-picker");
+            let shapePalette = document.getElementById("shape-picker")
             let color = "#000000";
 
-            for (let btn of pallete.getElementsByTagName("button")) {
+            for (let btn of palette.getElementsByTagName("button")) {
                 btn.style.setProperty("background-color", btn.dataset.color)
                 // btn.addEventListener("click", function(event) {
                 //     color = btn.dataset.color
                 // })
             }
 
-            pallete.addEventListener("click", function(event) {
+            palette.addEventListener("click", function(event) {
 
                 let target = event.target;
                 let btn = target.closest("button");
@@ -78,38 +79,69 @@
 
             })
 
-            let shapeType = "line";
-            let canvas = document.getElementById("canvas");
-            let startCoords = {};
-            let endCoords = {};
+            shapePalette.addEventListener("click", function(event) {
 
-            let currentShape;
-            canvas.addEventListener("mousedown", function(event) {
-                let xCoord = event.pageX;
-                let yCoord = event.pageY;
-                startCoords.x = xCoord;
-                startCoords.y = yCoord;
+                let target = event.target;
+                let btn = target.closest("button");
+                if (btn.tagName == "BUTTON") {
+                    shapeType = btn.dataset.shape
+                    console.log(shapeType)
+                }
 
             })
 
+            let shapeType = "line";
+            let canvas = document.getElementById("canvas");
+            let startCoords = {};
+           
 
+            let currentShape;
+            canvas.addEventListener("mousedown", function(event) {
+
+                startCoords.x = event.pageX;
+                startCoords.y = event.pageY;
+
+            })
 
             let drawLine = function(startCoordinates, endCoordinates) {
-                let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                let line = document.createElementNS("http://www.w3.org/2000/svg&quot;, "line");
                 line.setAttribute("x1", startCoordinates.x);
                 line.setAttribute("y1", startCoordinates.y);
                 line.setAttribute("x2", endCoordinates.x);
-                line.setAttribute("y2", endCoordinates.y);
+                line.setAttribute("y2",
+
+
+endCoordinates.y);
                 line.setAttribute("stroke", color);
                 canvas.appendChild(line);
                 return line
             }
 
+            let drawCircle = function(startCoordinates, endCoordinates) {
+
+            }
+
+            let drawRectangle = function(startCoordinates, endCoordinates) {
+
+            }
+
+            let drawShape = function(startCoordinates, endCoordinates) {
+                if (shapeType == "line") {
+                    return drawLine(startCoordinates, endCoordinates)
+                } else if (shapeType == "circle" ){
+                    return drawCircle(startCoordinates, endCoordinates)
+                } else if (shapeType == "rectangle" ){
+                    return drawRectangle(startCoordinates, endCoordinates)
+                } else {
+                    console.log(`Error ${shapeType} not exist.`)
+                }
+            }
+
             canvas.addEventListener("mouseup", function(event) {
-                let xCoord = event.pageX;
-                let yCoord = event.pageY;
-                endCoords.x = xCoord;
-                endCoords.y = yCoord;
+                let endCoords = {
+                    x: event.pageX,
+                    y: event.pageY,
+                }
 
                 drawLine(startCoords, endCoords)
             })
@@ -119,20 +151,28 @@
                     return;
                 }
 
-                let currenCoords = {
+                let endCoords = {
                     x: event.pageX,
                     y: event.pageY,
                 };
 
-                let xCoord = event.pageX;
-                let yCoord = event.pageY;
+                // let xCoord = event.pageX;
+                // let yCoord = event.pageY;
 
                 if ((currentShape !== null) && (currentShape !== undefined)) {
                     canvas.removeChild(currentShape);
                 }
-                let line = drawLine(startCoords, currenCoords);
-                currentShape = line;
+                let shape = drawShape(startCoords, endCoords)
+                // let line = drawLine(startCoords, endCoords);
+                currentShape = shape;
             })
         </script>
     </body>
 </html>
+
+
+
+
+
+
+
