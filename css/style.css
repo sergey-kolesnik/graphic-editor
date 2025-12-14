@@ -1,0 +1,35 @@
+ .shape, .color {
+    height: 25px;
+    width: 25px;
+    margin: 3px;
+            }
+.shape {
+    border: none;
+            }
+#shape-picker, #color-picker {
+    margin: 20px;
+            }
+svg, .tools {
+    display: inline-block;
+    vertical-align: top;
+    border: 1px solid black;
+            }
+.selected {
+    outline: 2px solid red; 
+    outline-offset: 3px;;
+            }
+#tool-line, #tool-circle, #tool-rectangle {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+            }
+            
+#tool-line {
+    background-image: url("../img/Line.png");
+            }
+#tool-circle {
+    background-image: url("../img/Ellipse.png");
+            }
+#tool-rectangle {
+    background-image: url("../img/Rectangle.png");
+            }
